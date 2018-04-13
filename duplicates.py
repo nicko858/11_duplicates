@@ -61,4 +61,4 @@ if __name__ == '__main__':
         else:
             raise IOError
     except IOError:
-        exit('No such directory - {} !').format(args.source_directory)
+        exit('No such directory - {} !'.format(args.source_directory))
