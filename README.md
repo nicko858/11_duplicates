@@ -1,6 +1,7 @@
 
 
 
+
 # Anti-Dublicator
 
 The code accept a path to  file-system's directory and find dublicate files.
@@ -13,7 +14,8 @@ Module ```dublicates.py``` contains the following functions:
 
 - ```get_args()``` - parses script command-line arguments
 - ```get_path_content()``` - accepts the path to file-system directory and returns info about representing files and files-size
-- ```get_dublicate_files()``` - accepts content from ```get_path_content()```-function and returns dublicate files (using file_name  and file-size).
+- ```get_reverse_path_content()``` - accepts content from ```get_path_content()```-function, changes keys and values order and returns dict-result .
+- ```get_dublicates_list()``` - accepts dictionary and returns list with values-count > 1
 - ```print_result()``` - prints info about finding files
 
 
@@ -41,8 +43,8 @@ $ python dublicates.py  <path to dir>
 ```
 in the console  output you will see something  like this:
 ```bash
-In the directory 'C:\Devman\' was found 3 dublicate files:
-
+In the directory 'C:\Devman\' was found dublicate files:
+________________________________________________________
 C:\Devman\5_lang_frequency\bars_new.py
 C:\Devman\3_bars\bars_new.py
 C:\Devman\bars_new.py
@@ -61,6 +63,4 @@ If the the directory doesnt't present in the file-system you will see the warnin
 # Project Goals
 
 The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
-
-
 

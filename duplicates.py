@@ -17,17 +17,14 @@ def get_args():
     return args
 
 
-def get_dublicate_files(source_path_content):
-    checked_files = {}
+def get_reverse_path_content(source_path_content):
+    reverse_path_content = {}
     for source_path, source_file_info in source_path_content.items():
-        if not source_file_info in checked_files.values():
-            checked_files[source_path] = source_file_info
+        if source_file_info not in reverse_path_content.keys():
+            reverse_path_content[source_file_info] = [source_path]
         else:
-            dublicate_files = []
-            for dubl_path, dubl_file_info in source_path_content.items():
-                if dubl_file_info == source_file_info:
-                    dublicate_files.append(dubl_path)
-            return dublicate_files, len(dublicate_files)
+            reverse_path_content[source_file_info].append(source_path)
+    return reverse_path_content
 
 
 def get_path_content(source_path):
@@ -37,16 +34,26 @@ def get_path_content(source_path):
             file_path = join(root, file)
             file_size = getsize(join(root, file))
             file_name = basename(file_path)
-            source_path_content[file_path] = [file_name, file_size]
+            source_path_content[file_path] = str(file_name) + '_size_' + str(file_size)
     return source_path_content
 
 
+def get_dublicates_list(content):
+    dublicates_list = []
+    for key, value in content.items():
+        if len(value) > 1:
+            dublicates_list.append(value)
+    return dublicates_list
+
+
 def print_result(source_path_content, source_dir):
-    if get_dublicate_files(source_path_content):
-        dublicate_files_list, dublicate_files_count = get_dublicate_files(source_path_content)
-        print('In the directory \'{}\' was found {} dublicate files:\n'.format(source_dir, dublicate_files_count))
-        for files in dublicate_files_list:
-            print(files)
+    dublicate_file_list = get_dublicates_list(get_reverse_path_content(source_path_content))
+    if dublicate_file_list:
+        print('In the directory \'{}\' was found dublicate files:\n'.format(source_dir))
+        print('_________________________________________________________________________')
+        for file_path in dublicate_file_list:
+            print('\n'.join(file_path))
+            print('_________________________________________________________________________')
     else:
         print('The are no dublicate files in the \'{}\' '
               'directory!'.format(source_dir))
@@ -61,4 +68,4 @@ if __name__ == '__main__':
         else:
             raise IOError
     except IOError:
-        exit('No such directory - {} !'.format(args.source_directory))
+        exit('No such directory - \'{}\' !'.format(args.source_directory))
