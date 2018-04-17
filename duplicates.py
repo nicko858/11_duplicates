@@ -5,6 +5,17 @@ from os.path import join, getsize, exists, isdir
 from collections import defaultdict
 
 
+def dir_check(dirname):
+    if not exists(dirname):
+        msg_exist = 'No such file or directory - "{}" !'.format(dirname)
+        raise argparse.ArgumentTypeError(msg_exist)
+    elif not isdir(dirname):
+        msg_isdir = '"{}" is not a directory'.format(dirname)
+        raise argparse.ArgumentTypeError(msg_isdir)
+    else:
+        return dirname
+
+
 def get_args():
     script_usage = 'python dublicates.py  <path to dir>'
     parser = argparse.ArgumentParser(
@@ -13,6 +24,7 @@ def get_args():
     )
     parser.add_argument(
         'source_directory',
+        type=dir_check,
         help='Specify the directory you want to check'
     )
     args = parser.parse_args()
@@ -47,7 +59,7 @@ def print_result(source_path_content, source_dir):
         print(delimiter)
         for file_name, paths in dublicate_file_dict.items():
             for path in paths:
-                print('Dublicate file "{}" exists in the following folders:\n{}'
+                print('Dublicate file "{}" exists in the following sub-directories:\n{}'
                       .format(file_name, '\n'.join(path)))
                 print (delimiter)
     else:
@@ -57,15 +69,5 @@ def print_result(source_path_content, source_dir):
 
 if __name__ == '__main__':
     args = get_args()
-    try:
-        if not exists(args.source_directory):
-            raise FileNotFoundError
-        if not isdir(args.source_directory):
-            raise OSError
-        source_path_content = get_files_info(args.source_directory)
-        print_result(source_path_content, args.source_directory)
-    except FileNotFoundError:
-       exit('No such file or directory - "{}" !'.format(args.source_directory))
-    except OSError:
-        exit('The "{}" is not a directory!'.format(args.source_directory))
-
+    source_path_content = get_files_info(args.source_directory)
+    print_result(source_path_content, args.source_directory)
