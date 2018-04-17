@@ -58,15 +58,14 @@ def print_result(source_path_content, source_dir):
 if __name__ == '__main__':
     args = get_args()
     try:
-        if exists(args.source_directory):
-            if isdir(args.source_directory):
-                source_path_content = get_files_info(args.source_directory)
-                print_result(source_path_content, args.source_directory)
-            else:
-                raise OSError
-        else:
+        if not exists(args.source_directory):
             raise FileNotFoundError
-    except OSError:
-        exit('The "{}" is not a directory!'.format(args.source_directory))
+        if not isdir(args.source_directory):
+            raise OSError
+        source_path_content = get_files_info(args.source_directory)
+        print_result(source_path_content, args.source_directory)
     except FileNotFoundError:
        exit('No such file or directory - "{}" !'.format(args.source_directory))
+    except OSError:
+        exit('The "{}" is not a directory!'.format(args.source_directory))
+
