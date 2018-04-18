@@ -1,19 +1,18 @@
 import argparse
 import os
-import re
 from os.path import join, getsize, exists, isdir
 from collections import defaultdict
 
 
-def dir_check(dirname):
-    if not exists(dirname):
-        msg_exist = 'No such file or directory - "{}" !'.format(dirname)
+def dir_check(dir_name):
+    if not exists(dir_name):
+        msg_exist = 'No such file or directory - "{}" !'.format(dir_name)
         raise argparse.ArgumentTypeError(msg_exist)
-    elif not isdir(dirname):
-        msg_isdir = '"{}" is not a directory'.format(dirname)
+    elif not isdir(dir_name):
+        msg_isdir = '"{}" is not a directory'.format(dir_name)
         raise argparse.ArgumentTypeError(msg_isdir)
     else:
-        return dirname
+        return dir_name
 
 
 def get_args():
@@ -32,42 +31,44 @@ def get_args():
 
 
 def get_files_info(source_path):
-    source_path_content = defaultdict(list)
+    files_info = defaultdict(list)
     for root, directories, file_names in os.walk(source_path):
-        for file in file_names:
-            file_path = join(root)
-            file_size = getsize(join(root, file))
-            file_info = '{} {} {} '.format(str(file), '_size_', str(file_size))
-            source_path_content[file_info].append(file_path)
-    return source_path_content
+        for file_name in file_names:
+            file_path = root
+            file_size = getsize(join(root, file_name))
+            files_info[(file_name, file_size)].append(file_path)
+    return files_info
 
 
-def get_dublicates(content):
+def get_dublicates_info(files_info):
     dublicates_dict = {}
-    for file_info, paths in content.items():
-        file_name = re.sub(' _.*', '', (str(file_info)))
+    for file_info, paths in files_info.items():
+        file_name = file_info[0]
         if len(paths) > 1:
-            dublicates_dict[file_name] = [paths]
+            dublicates_dict[file_name] = paths
     return dublicates_dict
 
 
-def print_result(source_path_content, source_dir):
-    dublicate_file_dict = get_dublicates(source_path_content)
+def print_dublicates(dublicate_file_dict, source_dir):
     delimiter = '_' * 80
     if dublicate_file_dict:
-        print('In the directory "{}" was found dublicate files:'.format(source_dir))
+        print('In the directory "{}" was found the following dublicate files:'
+              .format(source_dir))
         print(delimiter)
         for file_name, paths in dublicate_file_dict.items():
-            for path in paths:
-                print('Dublicate file "{}" exists in the following sub-directories:\n{}'
-                      .format(file_name, '\n'.join(path)))
-                print (delimiter)
+            print('Dublicate file "{}" exists in the following '
+                  'sub-directories:\n{}'
+                  .format(file_name, '\n'.join(paths)))
+            print (delimiter)
     else:
         print('The are no dublicate files in the "{}" '
               'directory!'.format(source_dir))
 
-
 if __name__ == '__main__':
     args = get_args()
-    source_path_content = get_files_info(args.source_directory)
-    print_result(source_path_content, args.source_directory)
+    source_path_info = get_files_info(args.source_directory)
+    dublicate_file_dict = get_dublicates_info(source_path_info)
+    print_dublicates(
+        dublicate_file_dict,
+        args.source_directory
+    )
