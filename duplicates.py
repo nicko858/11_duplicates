@@ -16,9 +16,9 @@ def dir_check(dir_name):
 
 
 def get_args():
-    script_usage = 'python dublicates.py  <path to dir>'
+    script_usage = 'python duplicates.py  <path to dir>'
     parser = argparse.ArgumentParser(
-        description='How to run dublicates.py:',
+        description='How to run duplicates.py:',
         usage=script_usage
     )
     parser.add_argument(
@@ -40,35 +40,34 @@ def get_files_info(source_path):
     return files_info
 
 
-def get_dublicates_info(files_info):
-    dublicates_dict = {}
-    for file_info, paths in files_info.items():
-        file_name = file_info[0]
+def get_duplicates_info(files_info):
+    duplicates_dict = {}
+    for (file_name, file_size), paths in files_info.items():
         if len(paths) > 1:
-            dublicates_dict[file_name] = paths
-    return dublicates_dict
+            duplicates_dict[file_name] = paths
+    return duplicates_dict
 
 
-def print_dublicates(dublicate_file_dict, source_dir):
+def print_duplicates(duplicate_file_dict, source_dir):
     delimiter = '_' * 80
-    if dublicate_file_dict:
-        print('In the directory "{}" was found the following dublicate files:'
+    if duplicate_file_dict:
+        print('In the directory "{}" was found the following duplicate files:'
               .format(source_dir))
         print(delimiter)
-        for file_name, paths in dublicate_file_dict.items():
-            print('Dublicate file "{}" exists in the following '
+        for file_name, paths in duplicate_file_dict.items():
+            print('Duplicate file "{}" exists in the following '
                   'sub-directories:\n{}'
                   .format(file_name, '\n'.join(paths)))
-            print (delimiter)
+            print(delimiter)
     else:
-        print('The are no dublicate files in the "{}" '
+        print('The are no duplicate files in the "{}" '
               'directory!'.format(source_dir))
 
 if __name__ == '__main__':
     args = get_args()
     source_path_info = get_files_info(args.source_directory)
-    dublicate_file_dict = get_dublicates_info(source_path_info)
-    print_dublicates(
-        dublicate_file_dict,
+    duplicate_file_dict = get_duplicates_info(source_path_info)
+    print_duplicates(
+        duplicate_file_dict,
         args.source_directory
     )
